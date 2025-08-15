@@ -1,6 +1,6 @@
 ﻿using CommandLine;
-using ThreeInRow.CLI;
-using ThreeInRow.CLI.Options;
+using ThreeInRow;
+using ThreeInRow.Parameters;
 
 var cli = Cli.Instance;
 cli.DrawMatrix();

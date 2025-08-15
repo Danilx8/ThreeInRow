@@ -24,20 +24,17 @@ public class MatrixManipulator
         
         _matrix.SetByCoordinates(move.ToCoordinate, fromElement);
         _matrix.SetByCoordinates(move.FromCoordinate, toElement);
-        var result = _iterator.ProcessMatches();
-        Console.WriteLine(result.AllMatches);
-        Console.WriteLine(result.CascadeCount);
-        Console.WriteLine(result.TotalElementsRemoved);
-    }
-
-    public void UseBonus()
-    {
-        throw new NotImplementedException();
+        ProcessField();
     }
 
     public void ActivateBonus()
     {
         throw new NotImplementedException();
+    }
+
+    private void ProcessField()
+    {
+        var result = _iterator.ProcessMatches();
     }
 
     public void AddBonus()

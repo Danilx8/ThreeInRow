@@ -36,7 +36,7 @@ public class Matrix
         _field[coordinate.RowIndex][coordinate.ColIndex] = element;
     }
 
-    private MatrixElement GenerateNew()
+    public static MatrixElement GenerateNew()
     {
         int type = Random.Next(5);
         return type switch

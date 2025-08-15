@@ -1,8 +1,8 @@
-using ThreeInRow.CLI.Options;
 using ThreeInRow.EventHandlers;
 using ThreeInRow.Matrix;
+using ThreeInRow.Parameters;
 
-namespace ThreeInRow.CLI;
+namespace ThreeInRow;
 
 public class Cli
 {

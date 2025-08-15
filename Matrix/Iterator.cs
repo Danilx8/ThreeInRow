@@ -26,6 +26,8 @@ public class Iterator(Matrix matrix)
             ApplyGravity();
 
             result.CascadeCount++;
+            
+            FillEmpty();
 
             // Continue to next cascade iteration
         }
@@ -33,9 +35,9 @@ public class Iterator(Matrix matrix)
         return result;
     }
 
-    private List<List<Coordinate>> FindAllMatches()
+    private List<CompleteRow> FindAllMatches()
     {
-        var allMatches = new List<List<Coordinate>>();
+        var allMatches = new List<CompleteRow>();
         var processedPositions = new HashSet<Coordinate>();
 
         // Find horizontal matches
@@ -55,12 +57,12 @@ public class Iterator(Matrix matrix)
         return allMatches;
     }
 
-    private List<List<Coordinate>> FindMatchesInLine(
+    private List<CompleteRow> FindMatchesInLine(
         int startRow, int startCol, int deltaRow, int deltaCol,
         HashSet<Coordinate> processedPositions)
     {
-        var matches = new List<List<Coordinate>>();
-        var currentMatch = new List<Coordinate>();
+        var matches = new List<CompleteRow>();
+        var currentMatch = new CompleteRow();
         MatrixElement currentElement = new EmptyElement();
 
         int row = startRow;
@@ -99,7 +101,7 @@ public class Iterator(Matrix matrix)
                 // Different element found, finish current match if valid
                 if (currentMatch.Count >= 3)
                 {
-                    matches.Add(new List<Coordinate>(currentMatch));
+                    matches.Add([..currentMatch]);
                     foreach (var pos in currentMatch)
                         processedPositions.Add(pos);
                 }
@@ -125,7 +127,7 @@ public class Iterator(Matrix matrix)
         return matches;
     }
 
-    private int RemoveMatches(List<List<Coordinate>> matches)
+    private int RemoveMatches(List<CompleteRow> matches)
     {
         int totalRemoved = 0;
         var positionsToRemove = new HashSet<Coordinate>();
@@ -176,6 +178,18 @@ public class Iterator(Matrix matrix)
             {
                 var coordinate = new Coordinate(7 - i, col);
                 matrix.SetByCoordinates(coordinate, nonEmptyElements[i]);
+            }
+        }
+    }
+
+    private void FillEmpty()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                var coordinate = new Coordinate(row, col);
+                if (matrix.IsEmptyByCoordinates(coordinate)) matrix.SetByCoordinates(coordinate, Matrix.GenerateNew());
             }
         }
     }
