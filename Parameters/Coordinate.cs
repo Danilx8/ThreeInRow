@@ -1,4 +1,4 @@
-namespace ThreeInRow.CLI.Options;
+namespace ThreeInRow.Parameters;
 
 public class Coordinate(int row, int col)
 {

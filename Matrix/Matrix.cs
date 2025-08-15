@@ -1,5 +1,5 @@
-using ThreeInRow.CLI.Options;
 using ThreeInRow.Matrix.MatrixElements;
+using ThreeInRow.Parameters;
 
 namespace ThreeInRow.Matrix;
 
@@ -25,6 +25,11 @@ public class Matrix
     public static Matrix Instance => _matrix ??= new Matrix();
 
     public MatrixElement GetByCoordinates(Coordinate coordinate) => _field[coordinate.RowIndex][coordinate.ColIndex];
+
+    public bool IsEmptyByCoordinates(Coordinate coordinate)
+    {
+        return _field[coordinate.RowIndex][coordinate.ColIndex].IsEmpty();
+    }
 
     public void SetByCoordinates(Coordinate coordinate, MatrixElement element)
     {

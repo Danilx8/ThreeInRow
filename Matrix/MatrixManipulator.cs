@@ -1,5 +1,5 @@
-using ThreeInRow.CLI.Options;
 using ThreeInRow.Matrix.MatrixElements;
+using ThreeInRow.Parameters;
 
 namespace ThreeInRow.Matrix;
 
@@ -7,10 +7,12 @@ public class MatrixManipulator
 {
     private static MatrixManipulator? _matrixManipulator;
     private readonly Matrix _matrix;
+    private readonly Iterator _iterator;
     
     private MatrixManipulator()
     {
         _matrix = Matrix.Instance;
+        _iterator = new Iterator(_matrix);
     }
 
     public static MatrixManipulator Instance => _matrixManipulator ??= new MatrixManipulator();
@@ -22,6 +24,10 @@ public class MatrixManipulator
         
         _matrix.SetByCoordinates(move.ToCoordinate, fromElement);
         _matrix.SetByCoordinates(move.FromCoordinate, toElement);
+        var result = _iterator.ProcessMatches();
+        Console.WriteLine(result.AllMatches);
+        Console.WriteLine(result.CascadeCount);
+        Console.WriteLine(result.TotalElementsRemoved);
     }
 
     public void UseBonus()
