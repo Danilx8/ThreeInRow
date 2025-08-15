@@ -12,65 +12,58 @@ while (true)
     var input = Console.ReadLine();
     if (string.IsNullOrEmpty(input)) continue;
 
-    try
-    {
-        var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        Parser.Default.ParseArguments<Options>(arguments)
-            .WithParsed(opts =>
+    var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    Parser.Default.ParseArguments<Options>(arguments)
+        .WithParsed(opts =>
+        {
+            try
             {
-                try
+                if (opts.Move != null)
                 {
-                    if (opts.Move != null)
-                    {
-                        cli.MakeMove(opts.Move);
-                        cli.DrawMatrix();
-                    }
-                    else if (opts.LaneBonus != null)
-                    {
-                        cli.ApplyBonus(new LaneRemover(), move: opts.LaneBonus);
-                    }
-                    else if (opts.TypeBonus != null)
-                    {
-                        cli.ApplyBonus(new TypeRemover(), coordinate: opts.TypeBonus);
-                    }
-                    else if (opts.Stats)
-                    {
-                        cli.SeeStatistics();
-                    }
-                    else if (opts.Exit)
-                    {
-                        Environment.Exit(0);
-                    }
+                    cli.MakeMove(opts.Move);
+                    cli.DrawMatrix();
                 }
-                catch (ArgumentException ex)
+                else if (opts.LaneBonus != null)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
+                    cli.ApplyBonus(new LaneRemover(), move: opts.LaneBonus);
                 }
-                catch (InvalidOperationException ex)
+                else if (opts.TypeBonus != null)
                 {
-                    Console.WriteLine($"Game error: {ex.Message}");
+                    cli.ApplyBonus(new TypeRemover(), coordinate: opts.TypeBonus);
                 }
-                catch (Exception ex)
+                else if (opts.Stats)
                 {
-                    Console.WriteLine($"Unexpected error: {ex.Message}");
-                    Console.WriteLine("Game continues...");
+                    cli.SeeStatistics();
                 }
-            })
-            .WithNotParsed(errs =>
+                else if (opts.Exit)
+                {
+                    Environment.Exit(0);
+                }
+            }
+            catch (ArgumentException ex)
             {
-                Console.WriteLine($"Command line errors: {errs}");
-                Console.WriteLine("Examples:");
-                Console.WriteLine("  --play 1:1,1:2");
-                Console.WriteLine("  --stats");
-                Console.WriteLine("  --exit");
-            });
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Command parsing error: {ex.Message}");
-        Console.WriteLine("Please try again with a valid command.");
-    }
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Game error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+                Console.WriteLine("Game continues...");
+            }
+        })
+        .WithNotParsed(errs =>
+        {
+            Console.WriteLine($"Command line errors: {errs}");
+            Console.WriteLine("Examples:");
+            Console.WriteLine("  --play 1:1,1:2");
+            Console.WriteLine("  --stats");
+            Console.WriteLine("  --exit");
+        });
 }
+
 
 class Options
 {

@@ -27,7 +27,7 @@ public class Cli
     public void ApplyBonus(Bonus bonus, MoveOption? move = null, Coordinate? coordinate = null)
     {
         var bonuses = _matrix.GetBonuses();
-        if (bonuses.Contains(bonus)) _matrix.ActivateBonus(bonus, move: move, coordinate: coordinate);
+        if (bonuses[bonus] != 0) _matrix.ActivateBonus(bonus, move: move, coordinate: coordinate);
         else Console.WriteLine("You don't have this bonus");
     }
 
@@ -57,6 +57,10 @@ public class Cli
 
     public void SeeStatistics()
     {
-        Console.WriteLine(_statistics.CountScore());
+        Console.WriteLine($"Score: {_statistics.CountScore()}");
+        foreach (var bonus in _matrix.GetBonuses())
+        {
+            Console.WriteLine($"{bonus.Key}: {bonus.Value}");
+        }
     }
 }

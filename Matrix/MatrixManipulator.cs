@@ -11,8 +11,13 @@ public class MatrixManipulator
     private readonly StatisticsCounter _statistics;
     private readonly Matrix _matrix;
     private readonly Iterator _iterator;
-    private readonly List<Bonus> _bonuses = [];
-    
+
+    private readonly Dictionary<Bonus, int> _bonuses = new()
+    {
+        { new LaneRemover(), 0 },
+        { new TypeRemover(), 0 }
+    };
+
     private MatrixManipulator()
     {
         _matrix = Matrix.Instance;
@@ -21,13 +26,13 @@ public class MatrixManipulator
     }
 
     public static MatrixManipulator Instance => _matrixManipulator ??= new MatrixManipulator();
-    
+
     public void SwitchPlaces(MoveOption move)
     {
         _statistics.AccountStep(move);
         var fromElement = _matrix.GetByCoordinates(move.FromCoordinate);
         var toElement = _matrix.GetByCoordinates(move.ToCoordinate);
-        
+
         _matrix.SetByCoordinates(move.ToCoordinate, fromElement);
         _matrix.SetByCoordinates(move.FromCoordinate, toElement);
         ProcessField();
@@ -38,13 +43,17 @@ public class MatrixManipulator
         switch (bonus)
         {
             case TypeRemover typeRemover:
-                RemoveByType(_matrix.GetByCoordinates(coordinate ?? throw new ArgumentException("Coordinate can't be null for RemoveByType bonus")));
+                RemoveByType(_matrix.GetByCoordinates(coordinate ??
+                                                      throw new ArgumentException(
+                                                          "Coordinate can't be null for RemoveByType bonus")));
+                _statistics.AccountBonusUse(bonus, coordinate);
                 break;
             case LaneRemover laneRemover:
                 RemoveLane(move ?? throw new ArgumentException("Move can't be null for RemoveLane bonus"));
+                _statistics.AccountBonusUse(bonus, move.FromCoordinate);
                 break;
         }
-        
+
         ProcessField();
     }
 
@@ -66,7 +75,7 @@ public class MatrixManipulator
 
     public void AddBonus(Bonus bonus)
     {
-        _bonuses.Add(bonus);
+        ++_bonuses[bonus];
     }
 
     private void RemoveLane(MoveOption move)
@@ -111,7 +120,7 @@ public class MatrixManipulator
         return _matrix.GetField();
     }
 
-    public List<Bonus> GetBonuses()
+    public Dictionary<Bonus, int> GetBonuses()
     {
         return _bonuses;
     }
