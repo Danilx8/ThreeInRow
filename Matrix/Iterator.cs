@@ -20,7 +20,7 @@ public class Iterator(Matrix matrix)
             // Remove matched elements
             int removedInThisCascade = RemoveMatches(matches);
             result.TotalElementsRemoved += removedInThisCascade;
-            result.AllMatches.Add(matches.SelectMany(m => m).ToList());
+            result.AllMatches.Add([..matches.SelectMany(m => m).ToList()]);
 
             // Apply gravity
             ApplyGravity();

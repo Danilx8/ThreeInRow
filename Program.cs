@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using ThreeInRow;
+using ThreeInRow.EventHandlers;
 using ThreeInRow.Parameters;
 
 var cli = Cli.Instance;
@@ -11,31 +12,71 @@ while (true)
     var input = Console.ReadLine();
     if (string.IsNullOrEmpty(input)) continue;
 
-    var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-    Parser.Default.ParseArguments<Options>(arguments)
-        .WithParsed(opts =>
-        {
-            if (opts.Move != null)
+    try
+    {
+        var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        Parser.Default.ParseArguments<Options>(arguments)
+            .WithParsed(opts =>
             {
-                cli.MakeMove(opts.Move);
-                cli.DrawMatrix();
-            }
-            else if (opts.Stats)
+                try
+                {
+                    if (opts.Move != null)
+                    {
+                        cli.MakeMove(opts.Move);
+                        cli.DrawMatrix();
+                    }
+                    else if (opts.LaneBonus != null)
+                    {
+                        cli.ApplyBonus(new LaneRemover(), move: opts.LaneBonus);
+                    }
+                    else if (opts.TypeBonus != null)
+                    {
+                        cli.ApplyBonus(new TypeRemover(), coordinate: opts.TypeBonus);
+                    }
+                    else if (opts.Stats)
+                    {
+                        cli.SeeStatistics();
+                    }
+                    else if (opts.Exit)
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Console.WriteLine($"Game error: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unexpected error: {ex.Message}");
+                    Console.WriteLine("Game continues...");
+                }
+            })
+            .WithNotParsed(errs =>
             {
-                cli.SeeStatistics();
-            }
-            else if (opts.Exit)
-            {
-                // cli.SeeStatistics();
-                Environment.Exit(0);
-            }
-        })
-        .WithNotParsed(errs => Console.WriteLine("Invalid command. Use --help for usage."));
+                Console.WriteLine($"Command line errors: {errs}");
+                Console.WriteLine("Examples:");
+                Console.WriteLine("  --play 1:1,1:2");
+                Console.WriteLine("  --stats");
+                Console.WriteLine("  --exit");
+            });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Command parsing error: {ex.Message}");
+        Console.WriteLine("Please try again with a valid command.");
+    }
 }
 
 class Options
 {
     private MoveOption? _move;
+    private MoveOption? _laneBonusCoordinates;
+    private Coordinate? _typeBonusCoordinate;
 
     [Option('p', "play", HelpText = "Make a move with two coordinates (e.g., '1:1,1:2')")]
     public string? MoveString { get; set; }
@@ -52,6 +93,32 @@ class Options
 
     [Option('s', "stats", HelpText = "Show game statistics")]
     public bool Stats { get; set; }
+
+    [Option('l', "lane", HelpText = "Apply lane bonus")]
+    public string? LaneBonusString { get; set; }
+
+    public MoveOption? LaneBonus
+    {
+        get
+        {
+            if (_laneBonusCoordinates == null && !string.IsNullOrEmpty(LaneBonusString))
+                _laneBonusCoordinates = new MoveOption(LaneBonusString);
+            return _laneBonusCoordinates;
+        }
+    }
+
+    [Option('t', "type", HelpText = "Apply type bonus")]
+    public string? TypeBonusString { get; set; }
+
+    public Coordinate? TypeBonus
+    {
+        get
+        {
+            if (_typeBonusCoordinate == null && !string.IsNullOrEmpty(TypeBonusString))
+                _typeBonusCoordinate = new Coordinate(TypeBonusString);
+            return _typeBonusCoordinate;
+        }
+    }
 
     [Option('e', "exit", HelpText = "Exit game")]
     public bool Exit { get; set; }

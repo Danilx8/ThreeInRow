@@ -1,4 +1,5 @@
 using ThreeInRow.EventHandlers;
+using ThreeInRow.EventHandlers.Bonuses;
 using ThreeInRow.Matrix;
 using ThreeInRow.Parameters;
 
@@ -23,9 +24,11 @@ public class Cli
         _matrix.SwitchPlaces(move);
     }
 
-    public void ApplyBonus(Bonus bonus)
+    public void ApplyBonus(Bonus bonus, MoveOption? move = null, Coordinate? coordinate = null)
     {
-        throw new NotImplementedException();
+        var bonuses = _matrix.GetBonuses();
+        if (bonuses.Contains(bonus)) _matrix.ActivateBonus(bonus, move: move, coordinate: coordinate);
+        else Console.WriteLine("You don't have this bonus");
     }
 
     public void DrawMatrix()

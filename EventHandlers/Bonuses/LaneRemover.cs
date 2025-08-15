@@ -1,9 +1,11 @@
+using ThreeInRow.EventHandlers.Bonuses;
+
 namespace ThreeInRow.EventHandlers;
 
 public class LaneRemover: Bonus
 {
     public override string GetName()
     {
-        throw new NotImplementedException();
+        return "Lane remover";
     }
 }

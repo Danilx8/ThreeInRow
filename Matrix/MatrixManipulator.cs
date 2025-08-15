@@ -1,3 +1,5 @@
+using ThreeInRow.EventHandlers;
+using ThreeInRow.EventHandlers.Bonuses;
 using ThreeInRow.Matrix.MatrixElements;
 using ThreeInRow.Parameters;
 
@@ -6,19 +8,23 @@ namespace ThreeInRow.Matrix;
 public class MatrixManipulator
 {
     private static MatrixManipulator? _matrixManipulator;
+    private readonly StatisticsCounter _statistics;
     private readonly Matrix _matrix;
     private readonly Iterator _iterator;
+    private readonly List<Bonus> _bonuses = [];
     
     private MatrixManipulator()
     {
         _matrix = Matrix.Instance;
         _iterator = new Iterator(_matrix);
+        _statistics = StatisticsCounter.Instance;
     }
 
     public static MatrixManipulator Instance => _matrixManipulator ??= new MatrixManipulator();
     
     public void SwitchPlaces(MoveOption move)
     {
+        _statistics.AccountStep(move);
         var fromElement = _matrix.GetByCoordinates(move.FromCoordinate);
         var toElement = _matrix.GetByCoordinates(move.ToCoordinate);
         
@@ -27,19 +33,77 @@ public class MatrixManipulator
         ProcessField();
     }
 
-    public void ActivateBonus()
+    public void ActivateBonus(Bonus bonus, Coordinate? coordinate, MoveOption? move)
     {
-        throw new NotImplementedException();
+        switch (bonus)
+        {
+            case TypeRemover typeRemover:
+                RemoveByType(_matrix.GetByCoordinates(coordinate ?? throw new ArgumentException("Coordinate can't be null for RemoveByType bonus")));
+                break;
+            case LaneRemover laneRemover:
+                RemoveLane(move ?? throw new ArgumentException("Move can't be null for RemoveLane bonus"));
+                break;
+        }
+        
+        ProcessField();
     }
 
     private void ProcessField()
     {
         var result = _iterator.ProcessMatches();
+        _statistics.AccountCombinations(result.AllMatches);
+
+        if (result.TotalElementsRemoved > 10)
+        {
+            AddBonus(new TypeRemover());
+        }
+
+        if (result.AllMatches.Find(row => row.Count > 5) != null)
+        {
+            AddBonus(new LaneRemover());
+        }
     }
 
-    public void AddBonus()
+    public void AddBonus(Bonus bonus)
     {
-        throw new NotImplementedException();
+        _bonuses.Add(bonus);
+    }
+
+    private void RemoveLane(MoveOption move)
+    {
+        if (move.FromCoordinate.ColIndex == move.ToCoordinate.ColIndex)
+        {
+            int columnIndex = move.FromCoordinate.ColIndex;
+            for (var rowIndex = 0; rowIndex < 8; ++rowIndex)
+            {
+                var coordinate = new Coordinate(rowIndex, columnIndex);
+                _matrix.SetByCoordinates(coordinate, new EmptyElement());
+            }
+        }
+
+        if (move.FromCoordinate.RowIndex == move.ToCoordinate.RowIndex)
+        {
+            int rowIndex = move.ToCoordinate.RowIndex;
+            for (var columnIndex = 0; columnIndex < 8; ++columnIndex)
+            {
+                var coordinate = new Coordinate(rowIndex, columnIndex);
+                _matrix.SetByCoordinates(coordinate, new EmptyElement());
+            }
+        }
+    }
+
+    private void RemoveByType(MatrixElement elementOfType)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Console.Write(i + 1 + " ");
+            for (int j = 0; j < 8; j++)
+            {
+                var coordinate = new Coordinate(i, j);
+                if (_matrix.GetByCoordinates(coordinate).Equals(elementOfType))
+                    _matrix.SetByCoordinates(coordinate, new EmptyElement());
+            }
+        }
     }
 
     public MatrixElement[][] GetMatrixField()
@@ -47,8 +111,8 @@ public class MatrixManipulator
         return _matrix.GetField();
     }
 
-    public void GetBonuses()
+    public List<Bonus> GetBonuses()
     {
-        throw new NotImplementedException();
+        return _bonuses;
     }
 }
