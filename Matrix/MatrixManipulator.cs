@@ -2,7 +2,7 @@ namespace ThreeInRow.Matrix;
 
 public class MatrixManipulator
 {
-    private static MatrixManipulator _matrixManipulator;
+    private static MatrixManipulator? _matrixManipulator;
     
     public MatrixManipulator()
     {

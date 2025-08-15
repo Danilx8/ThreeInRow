@@ -11,7 +11,7 @@ public class StatisticsCounter
         throw new NotImplementedException();
     }
 
-    public StatisticsCounter Instance => _statistics ??= new StatisticsCounter();
+    public static StatisticsCounter Instance => _statistics ??= new StatisticsCounter();
     
     public void AccountCombination()
     {
