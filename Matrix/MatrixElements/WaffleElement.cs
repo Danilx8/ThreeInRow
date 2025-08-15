@@ -4,6 +4,6 @@ public class WaffleElement : MatrixElement
 {
     public override string GetName()
     {
-        throw new NotImplementedException();
+        return "W";
     }
 }

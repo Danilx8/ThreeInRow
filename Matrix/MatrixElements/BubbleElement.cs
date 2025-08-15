@@ -1,9 +1,9 @@
 namespace ThreeInRow.Matrix.MatrixElements;
 
-public class CandyElement : MatrixElement
+public class BubbleElement : MatrixElement
 {
     public override string GetName()
     {
-        return "C";
+        return "B";
     }
 }

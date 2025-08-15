@@ -1,3 +1,4 @@
+using ThreeInRow.CLI.Options;
 using ThreeInRow.Matrix.MatrixElements;
 
 namespace ThreeInRow.Matrix;
@@ -6,7 +7,8 @@ public class Matrix
 {
     private static Matrix? _matrix;
     private MatrixElement[][] _field;
-    
+    private static readonly Random Random = new();
+
     private Matrix()
     {
         _field = new MatrixElement[8][];
@@ -22,23 +24,29 @@ public class Matrix
 
     public static Matrix Instance => _matrix ??= new Matrix();
 
-    public void SetCoordinates()
+    public MatrixElement GetByCoordinates(Coordinate coordinate) => _field[coordinate.RowIndex][coordinate.ColIndex];
+
+    public void SetByCoordinates(Coordinate coordinate, MatrixElement element)
     {
-        throw new NotImplementedException();
+        _field[coordinate.RowIndex][coordinate.ColIndex] = element;
     }
-    
+
     private MatrixElement GenerateNew()
     {
-        throw new NotImplementedException();
+        int type = Random.Next(5);
+        return type switch
+        {
+            0 => new CandyElement(),
+            1 => new PieElement(),
+            2 => new WaffleElement(),
+            3 => new BubbleElement(),
+            4 => new OrangeElement(),
+            _ => throw new InvalidOperationException("Unexpected random value")
+        };
     }
 
-    public void Iterate()
+    public MatrixElement[][] GetField()
     {
-        throw new NotImplementedException();
-    }
-
-    public MatrixElement[][] GetMatrix()
-    {
-        throw new NotImplementedException();
+        return _field;
     }
 }

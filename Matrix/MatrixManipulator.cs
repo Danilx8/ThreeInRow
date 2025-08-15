@@ -1,19 +1,27 @@
+using ThreeInRow.CLI.Options;
+using ThreeInRow.Matrix.MatrixElements;
+
 namespace ThreeInRow.Matrix;
 
 public class MatrixManipulator
 {
     private static MatrixManipulator? _matrixManipulator;
+    private readonly Matrix _matrix;
     
-    public MatrixManipulator()
+    private MatrixManipulator()
     {
-        throw new NotImplementedException();
+        _matrix = Matrix.Instance;
     }
 
     public static MatrixManipulator Instance => _matrixManipulator ??= new MatrixManipulator();
     
-    public void SwitchPlaces()
+    public void SwitchPlaces(MoveOption move)
     {
-        throw new NotImplementedException();
+        var fromElement = _matrix.GetByCoordinates(move.FromCoordinate);
+        var toElement = _matrix.GetByCoordinates(move.ToCoordinate);
+        
+        _matrix.SetByCoordinates(move.ToCoordinate, fromElement);
+        _matrix.SetByCoordinates(move.FromCoordinate, toElement);
     }
 
     public void UseBonus()
@@ -31,9 +39,9 @@ public class MatrixManipulator
         throw new NotImplementedException();
     }
 
-    public void GetMatrix()
+    public MatrixElement[][] GetMatrixField()
     {
-        throw new NotImplementedException();
+        return _matrix.GetField();
     }
 
     public void GetBonuses()
