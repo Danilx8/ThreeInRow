@@ -11,4 +11,4 @@ dotnet bin/Release/net8.0/ThreeInRow.dll
 Выход: -e
 
 Скриншот программы:
-<img width="500" height="554" alt="Screenshot 2025-08-17 at 15 35 00" src="https://github.com/user-attachments/assets/97ead880-7c52-4456-acdb-a34dae358bca" />
+<img width="471" height="583" alt="Screenshot 2025-08-17 at 15 37 49" src="https://github.com/user-attachments/assets/a5971093-3d50-45f9-931c-53c7eff60b4e" />
