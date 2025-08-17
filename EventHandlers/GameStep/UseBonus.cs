@@ -12,7 +12,7 @@ public class UseBonus(int index, Coordinate coordinate, Bonus bonus)
     public override string ToString()
     {
         var builder = new StringBuilder();
-        builder.Append($"{_index}. Used bonus {_bonus.GetName()} at {coordinate}");
+        builder.Append($"{_index}. Used bonus {_bonus.ToString()} at {coordinate}");
         
         return builder.ToString();
     }
