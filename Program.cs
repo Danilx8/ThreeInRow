@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 using ThreeInRow;
-using ThreeInRow.EventHandlers;
+using ThreeInRow.EventHandlers.Bonuses;
 using ThreeInRow.Parameters;
 
 var cli = Cli.Instance;
@@ -22,6 +22,7 @@ while (true)
                 {
                     cli.MakeMove(opts.Move);
                     cli.DrawMatrix();
+                    cli.SeeStatistics();
                 }
                 else if (opts.LaneBonus != null)
                 {

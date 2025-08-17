@@ -1,6 +1,4 @@
-using ThreeInRow.EventHandlers.Bonuses;
-
-namespace ThreeInRow.EventHandlers;
+namespace ThreeInRow.EventHandlers.Bonuses;
 
 public class TypeRemover : Bonus
 {

@@ -12,10 +12,10 @@ public class MatrixManipulator
     private readonly Matrix _matrix;
     private readonly Iterator _iterator;
 
-    private readonly Dictionary<Bonus, int> _bonuses = new()
+    private readonly Dictionary<Type, int> _bonuses = new()
     {
-        { new LaneRemover(), 0 },
-        { new TypeRemover(), 0 }
+        { typeof(LaneRemover), 0 },
+        { typeof(TypeRemover), 0 }
     };
 
     private MatrixManipulator()
@@ -64,16 +64,16 @@ public class MatrixManipulator
 
         if (result.TotalElementsRemoved > 10)
         {
-            AddBonus(new TypeRemover());
+            AddBonus(typeof(TypeRemover));
         }
 
         if (result.AllMatches.Find(row => row.Count > 5) != null)
         {
-            AddBonus(new LaneRemover());
+            AddBonus(typeof(LaneRemover));
         }
     }
 
-    public void AddBonus(Bonus bonus)
+    public void AddBonus(Type bonus)
     {
         ++_bonuses[bonus];
     }
@@ -122,6 +122,10 @@ public class MatrixManipulator
 
     public Dictionary<Bonus, int> GetBonuses()
     {
-        return _bonuses;
+        return new Dictionary<Bonus, int>
+        {
+            { new TypeRemover(), _bonuses[typeof(TypeRemover)] },
+            { new LaneRemover(), _bonuses[typeof(LaneRemover)] }
+        };
     }
 }
